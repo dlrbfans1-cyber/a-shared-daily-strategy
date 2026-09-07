@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - "reports/**/*.docx"
+      - "spreadsheets/**/*.xlsx"
       - "site/**"
       - ".github/workflows/pages.yml"
   workflow_dispatch:
