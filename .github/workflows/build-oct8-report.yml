@@ -1,0 +1,32 @@
+name: Build Oct 8 report
+on:
+  push:
+    paths:
+      - 'tmp_oct8/**'
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Rebuild docx when all chunks exist
+        shell: bash
+        run: |
+          shopt -s nullglob
+          files=(tmp_oct8/chunk_*)
+          if [ "${#files[@]}" -ne 8 ]; then
+            echo "Waiting for all 8 chunks; found ${#files[@]}"
+            exit 0
+          fi
+          mkdir -p reports/2026/10
+          cat tmp_oct8/chunk_* | base64 -d > reports/2026/10/2026-10-08.docx
+          rm -rf tmp_oct8
+          rm -f .github/workflows/build-oct8-report.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Add pre-market strategy report for 2026-10-08"
+          git push
